@@ -44,6 +44,10 @@ Operations:
   - "-" : subtraction
   - "*" : multiplication
   - "/" : division
+  - ">>" : right shift (integers only)
+  - "<<" : left shift (integers only)
+  - "%"  : modulo
+  - "**" : exponentiation
 
 Error conditions:
   - Invalid operator --> Program should exit
@@ -56,6 +60,12 @@ Error conditions:
 # NOTE - Hint:  Look at  https://docs.python.org/3/library/operator.html
 
 import operator
+
+try:
+    user_input = raw_input
+    
+except NameError:
+    user_input = input
 # ------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------
@@ -74,7 +84,11 @@ operators = {
     "+" : operator.add,
     "-" : operator.sub,
     "/" : operator.truediv,
-    "*" : operator.mul
+    "*" : operator.mul,
+    ">>": operator.rshift,
+    "<<": operator.lshift,
+    "%" : operator.mod,
+    "**": operator.pow
 }
 
 
@@ -90,20 +104,31 @@ def get_user_input():
     """
     # NOTE - Use "try"/"except" statements to allow code to handle errors gracefully.      
     try:
-        num1 = float(input("Enter first number:"))
-        num2 = float(input("Enter second number:"))
-        op   = input("Enter operation (+, -, *, /):")
+        text1 = user_input("Enter first number:")
+        text2 = user_input("Enter second number:")
+        op    = user_input("Enter operation (+, -, *, /, >>, <<, %, **):").strip()
         
         operation = operators[op]
-
         
+        if op in (">>", "<<"):
+            num1 = int(text1)
+            num2 = int(text2)
+            
+            if num2 < 0:
+                raise ValueError("Shift count cannot be negative")
+        
+        else:
+            num1 = float(text1)
+            num2 = float(text2)
+                
+       
         return (num1, num2, operation)
         # # NOTE - Use "pass" statements to allow code to be run without having to 
         # # NOTE - fill out the contents.  This pass statement should be removed    
         # pass
         
         # NOTE - User input is generally returned as a string and must be translated.
-    except:
+    except (ValueError, KeyError):
         print("Invalid Input")
         return (None, None, None)
 
@@ -142,7 +167,7 @@ if __name__ == "__main__":
             
         else:
         
-            print(operation(n1, n2))
+            print(op(n1, n2))
         
         
     # print(n1)
